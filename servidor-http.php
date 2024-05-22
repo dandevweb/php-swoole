@@ -3,16 +3,18 @@
 use Swoole\Coroutine\Http\Client;
 use Swoole\Http\{Server, Request, Response};
 
+Co::set(['hook_flags' => SWOOLE_HOOK_ALL]);
+
 $server = new Server('0.0.0.0', 8080);
 
 $server->on('request', function (Request $request, Response $response) {
     $channel = new chan(2);
     
     go(function() use ($channel){
-        $client = new Client('localhost', 8001);
-        $client->get('/server.php');
+        $curl = curl_init('http://localhost:8001/server.php');
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-        $content = $client->getBody();
+        $content = curl_exec($curl);
         $channel->push($content);
     });
 
