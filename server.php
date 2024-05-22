@@ -1,0 +1,3 @@
+<?php 
+sleep(1);
+echo "Servidor HTTP\n";
